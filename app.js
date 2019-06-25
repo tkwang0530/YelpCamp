@@ -28,7 +28,7 @@ app.use(flash());
 
 
 
-mongoose.connect("mongodb://localhost:27017/yelp_camp", {
+mongoose.connect("mongodb+srv://tkwang0530:Aabc@0989093345@cluster0-orcrr.mongodb.net/test?retryWrites=true&w=majority", {
 	useNewUrlParser: true,
 	useCreateIndex: true //Maybe we don't need this line??
 }).then(() => {
@@ -36,6 +36,15 @@ mongoose.connect("mongodb://localhost:27017/yelp_camp", {
 }).catch(err => {
 	console.log('ERROR:', err.message);
 });
+
+// mongoose.connect("mongodb://localhost:27017/yelp_camp", {
+// 	useNewUrlParser: true,
+// 	useCreateIndex: true //Maybe we don't need this line??
+// }).then(() => {
+// 	console.log('Connected to DB!');
+// }).catch(err => {
+// 	console.log('ERROR:', err.message);
+// });
 
 // PASSPORT CONFIGURATION
 app.use(require("express-session")({
@@ -63,9 +72,9 @@ app.use("/campgrounds/:id/comments", commentRoutes);
 
 
 
-// app.listen(3000, () => {
-// 	console.log('The YelpCamp server has started');
-// });
-app.listen(process.env.PORT, process.env.IP, function() {
-	console.log("The YelpCamp Server has started!");
+app.listen(3000, () => {
+	console.log('The YelpCamp server has started');
 });
+// app.listen(process.env.PORT, process.env.IP, function() {
+// 	console.log("The YelpCamp Server has started!");
+// });
