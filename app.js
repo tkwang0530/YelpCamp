@@ -27,8 +27,8 @@ app.use(flash());
 
 
 
-
-mongoose.connect("mongodb+srv://tkwang0530:Aabc@0989093345@cluster0-orcrr.mongodb.net/test?retryWrites=true&w=majority", {
+var url = process.env.DATABASEURL || "mongodb://localhost:27017/yelp_camp";
+mongoose.connect(url, {
 	useNewUrlParser: true,
 	useCreateIndex: true //Maybe we don't need this line??
 }).then(() => {
