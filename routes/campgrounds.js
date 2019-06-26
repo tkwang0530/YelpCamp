@@ -22,7 +22,7 @@ router.get("/", function(req, res) {
 	Campground.find({}, function(err, allCampgrounds) {
 		if(err) console.log(err);
 		else {
-			res.render("campgrounds/index", {campgrounds: allCampgrounds});
+			res.render("campgrounds/index", {campgrounds: allCampgrounds, page: 'campgrounds'});
 		}
 	});
 });
@@ -79,8 +79,6 @@ router.get("/:id", function(req, res) {
 			res.render("campgrounds/show", {campground: foundCampground});
 		}
 	}); 
-	
-	//res.send("This will be the show page one day!");
 });
 
 // EDIT CAMPGROUND ROUTE
