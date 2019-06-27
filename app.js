@@ -30,7 +30,7 @@ app.locals.moment = require("moment");
 //seedDB(); seed the database
 
 
-
+//"mongodb://localhost:27017/yelp_camp"
 var url = process.env.DATABASEURL || "mongodb://localhost:27017/yelp_camp";
 mongoose.connect(url, {
 	useNewUrlParser: true,
