@@ -17,6 +17,7 @@ const app            = express();
 
 //Requiring Routes
 var commentRoutes    = require("./routes/comments"),
+	reviewRoutes     = require("./routes/reviews"),
 	campgroundRoutes = require("./routes/campgrounds"),
 	indexRoutes      = require("./routes/index");
 
@@ -41,15 +42,6 @@ mongoose.connect(url, {
 	console.log('ERROR:', err.message);
 });
 
-// mongoose.connect("mongodb://localhost:27017/yelp_camp", {
-// 	useNewUrlParser: true,
-// 	useCreateIndex: true //Maybe we don't need this line??
-// }).then(() => {
-// 	console.log('Connected to DB!');
-// }).catch(err => {
-// 	console.log('ERROR:', err.message);
-// });
-
 // PASSPORT CONFIGURATION
 app.use(require("express-session")({
 	secret: "Once again, Rusty wins cutest dog",
@@ -72,7 +64,7 @@ app.use(function(req, res, next) {
 app.use("/", indexRoutes);
 app.use("/campgrounds", campgroundRoutes);
 app.use("/campgrounds/:id/comments", commentRoutes);
-
+app.use("/campgrounds/:id/reviews", reviewRoutes);
 
 
 

@@ -8,7 +8,7 @@ var campgroundSchema = new mongoose.Schema({
 	location: String,
 	lat: Number,
 	lng: Number,
-	createdAt: { type: Date, default: Date.now},
+	createdAt: { type: Date, default: Date.now },
 	author: {
 		id: {
 			type: mongoose.Schema.Types.ObjectId,
@@ -19,8 +19,18 @@ var campgroundSchema = new mongoose.Schema({
 	comments: [{
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "Comment"
+	}
+	],
+	reviews: [
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Review"
 		}
-	]
+	],
+	rating: {
+		type: Number,
+		default: 0
+	}
 });
 
 module.exports = mongoose.model("Campground", campgroundSchema);

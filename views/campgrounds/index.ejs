@@ -34,6 +34,15 @@
 				<img src="<%= campgrounds[i].image %>">
 				<div class="caption">
 					<h4><%= campgrounds[i].name %></h4>
+					<% if (campgrounds[i].rating === 0) { %>
+						<em>No reviews yet.</em>
+						<% } else { %>
+						<span class="fa fa-star checked"></span>
+						<span class="fa fa-star <% if (campgrounds[i].rating > 1.5) { %> checked <% } %>"></span>
+						<span class="fa fa-star <% if (campgrounds[i].rating > 2.5) { %> checked <% } %>"></span>
+						<span class="fa fa-star <% if (campgrounds[i].rating > 3.5) { %> checked <% } %>"></span>
+						<span class="fa fa-star <% if (campgrounds[i].rating > 4.5) { %> checked <% } %>"></span>
+						<% } %>
 				</div>
 				<p>
 					<a href="/campgrounds/<%=campgrounds[i]._id%>" class="btn btn-primary">More Info</a>

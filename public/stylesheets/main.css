@@ -19,3 +19,8 @@
     height: 400px;
     width: 100%;
 }
+
+/*set color of the Review Stars*/
+.checked {
+	color: orange;
+}
