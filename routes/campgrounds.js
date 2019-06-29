@@ -2,6 +2,7 @@ var express = require("express");
 var router = express.Router();
 var Campground = require("../models/campground");
 var Review = require("../models/review");
+var Comment = require("../models/comment");
 
 //var middleware = require("../middleware/index.js");
 var middleware = require("../middleware");
