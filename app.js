@@ -63,9 +63,10 @@ app.use(function(req, res, next) {
 
 app.use("/", indexRoutes);
 app.use("/campgrounds", campgroundRoutes);
-app.use("/campgrounds/:id/comments", commentRoutes);
-app.use("/campgrounds/:id/reviews", reviewRoutes);
+app.use("/campgrounds/:slug/reviews", reviewRoutes);
+app.use("/campgrounds/:slug/comments", commentRoutes);
 
+//app.use("/campgrounds/:id/comments", commentRoutes);
 
 
 // app.listen(3000, () => {
