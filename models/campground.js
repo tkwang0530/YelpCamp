@@ -65,7 +65,7 @@ async function generateUniqueSlug(id, campgroundName, slug) {
 		}
 		// check if a campground with the slug already exists
 		var campground = await Campground.findOne({ slug: slug });
-		// check if a campground was found or if the found campground is the current campground
+		// check if a campground was not found or if the found campground is the current campground
 		if (!campground || campground._id.equals(id)) {
 			return slug;
 		}

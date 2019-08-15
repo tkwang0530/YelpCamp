@@ -8,46 +8,45 @@ var nodemailer = require("nodemailer");
 var crypto = require("crypto");
 
 //Root route
-router.get("/", function(req, res) {
+router.get("/", (req, res) => {
 	res.render("landing");
 });
 
-
 //show register form
-router.get("/register", function(req, res) {
+router.get("/register", (req, res) => {
 	res.render("register", {page: 'register'});
 });
 //Handle sign up logic
-router.post("/register", function(req, res) {
-	var newUser = new User({
-		username: req.body.username,
-		firstName: req.body.firstName,
-		lastName: req.body.lastName,
-		email: req.body.email,
-		avatar: req.body.avatar
-	});
-	//eval(require("locus"));
-	if(req.body.adminCode === "secretcode123") {
-		newUser.isAdmin = true;
-	}
-	User.register(newUser, req.body.password, function(err, user) {
-		if(err) {
-			req.flash("error", err.message);
-			return res.redirect("/register");
-		}
-		
-		passport.authenticate("local")(req, res, function() {
-			req.flash("success", "Welcome to YelpCamp " + user.username);
-			res.redirect("/campgrounds");	
-		});
-	});
+router.post("/register", async (req, res) => {
+  try {
+    var newUser = await new User({
+      username: req.body.username,
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      email: req.body.email,
+      avatar: req.body.avatar
+    });
+    //eval(require("locus"));
+    if(req.body.adminCode === "secretcode123") {
+      newUser.isAdmin = true;
+    }
+    let user = await User.register(newUser, req.body.password);
+    passport.authenticate("local")(req, res, function() {
+      req.flash("success", "Welcome to YelpCamp " + user.username);
+      res.redirect("/campgrounds");	
+    });
+  } catch (error) {
+    console.log(error);
+    req.flash("error", error.message);
+    return res.redirect("/register");
+  }
 });
 
 
 
 // LOGIN ROUTE
 //show login form
-router.get("/login", function(req, res) {
+router.get("/login", (req, res) => {
 	res.render("login", {page: 'login'});
 });
 //handling login logic
@@ -120,14 +119,14 @@ router.post('/forgot', function(req, res, next) {
   });
 });
 
-router.get('/reset/:token', function(req, res) {
-  User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, function(err, user) {
-    if (!user) {
-      req.flash('error', 'Password reset token is invalid or has expired.');
-      return res.redirect('/forgot');
-    }
+router.get('/reset/:token', async (req, res) => {
+  try {
+    let user = await User.findOne({resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now()}});
     res.render('reset', {token: req.params.token});
-  });
+  } catch (error) {
+    req.flash('error', 'Password reset token is invalid or has expired.');
+    return res.redirect('/forgot');
+  }
 });
 
 router.post('/reset/:token', function(req, res) {
@@ -181,20 +180,23 @@ router.post('/reset/:token', function(req, res) {
 });
 
 // USER PROFILE
-router.get("/users/:id", function(req, res) {
-	User.findById(req.params.id, function (err, foundUser) {
-if(err) {
-	req.flash("error", "Something went wrong.");
-	res.redirect("/");
-}
-Campground.find().where("author.id").equals(foundUser._id).exec(function(err, campgrounds) {
-	if(err) {
-		req.flash("error", "Something went wrong.");
-		res.redirect("/");
-	}
-	res.render("users/show", {user: foundUser, campgrounds: campgrounds});
-});
-
-	});
+router.get("/users/:id", async (req, res) => {
+  try {
+    let foundUser = await User.findById(req.params.id);
+    if(!foundUser) {
+      req.flash("error", "User not found.");
+      res.redirect("/");
+    }
+    let campgrounds = await Campground.find().where("author.id").equals(foundUser._id).exec();
+    if(!campgrounds) {
+      req.flash("error", "campgrounds not found.");
+      res.redirect("/");
+    }
+    res.render("users/show", {user: foundUser, campgrounds: campgrounds});
+  } catch (error) {
+    Console.log(error);
+    req.flash("error", error.message);
+    res.redirect("back");
+  }
 });
 module.exports = router;
