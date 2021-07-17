@@ -1,11 +1,8 @@
 const mongoose = require("mongoose");
 // SCHEMA SETUP
 const campgroundSchema = new mongoose.Schema({
-	name: {
-		type: String,
-		required: "Campground name cannot be blank."
-	},
-	price: String,
+	title: String,
+	price: Number,
 	image: String,
 	description: String,
 	location: String,
@@ -22,11 +19,8 @@ const campgroundSchema = new mongoose.Schema({
 	},
 	createdAt: { type: Date, default: Date.now },
 	author: {
-		id: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: "User"
-		},
-		username: String
+		type: mongoose.Schema.Types.ObjectId,
+		ref: "User"
 	},
 	comments: [{
 		type: mongoose.Schema.Types.ObjectId,
@@ -52,9 +46,11 @@ const campgroundSchema = new mongoose.Schema({
 // add a slug before the campground gets saved to the database
 campgroundSchema.pre('save', async function (next) {
 	try {
-		// check if a new campground is being saved, or if the campground name is being modified
-		if (this.isNew || this.isModified("name")) {
-			this.slug = await generateUniqueSlug(this._id, this.name);
+		// check if a new campground is being saved, or if the campground's title is being modified
+		if (this.isNew || this.isModified("title")) {
+			console.log('this._id', this._id)
+			console.log('this.title', this.title)
+			this.slug = await generateUniqueSlug(this._id, this.title);
 		}
 		next();
 	} catch (err) {
