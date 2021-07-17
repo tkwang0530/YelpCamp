@@ -1,28 +1,27 @@
 //Dotenv
 require('dotenv').config();
 
-const express     = require("express");
-const passport    = require("passport");
+const express = require("express");
+const passport = require("passport");
 const LocalStrategy = require("passport-local");
 
-const mongoose       = require('mongoose');
-const flash          = require("connect-flash");
-const bodyParser     = require("body-parser");
-const Campground     = require("./models/campground");
-const seedDB 	     = require("./seeds");
+const mongoose = require('mongoose');
+const flash = require("connect-flash");
+const Campground = require("./models/campground");
+const seedDB = require("./seeds");
 const methodOverride = require("method-override");
-const Comment        = require("./models/comment");
-const User           = require("./models/user");
-const app            = express();
+const Comment = require("./models/comment");
+const User = require("./models/user");
+const app = express();
 
 //Requiring Routes
-var commentRoutes    = require("./routes/comments"),
-	reviewRoutes     = require("./routes/reviews"),
+var commentRoutes = require("./routes/comments"),
+	reviewRoutes = require("./routes/reviews"),
 	campgroundRoutes = require("./routes/campgrounds"),
-	indexRoutes      = require("./routes/index");
+	indexRoutes = require("./routes/index");
 
 
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
 app.use(methodOverride("_method"));
@@ -54,7 +53,7 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
 	res.locals.currentUser = req.user;
 	res.locals.error = req.flash("error");
 	res.locals.success = req.flash("success");
@@ -72,6 +71,6 @@ app.use("/campgrounds/:slug/comments", commentRoutes);
 // app.listen(3000, () => {
 // 	console.log('The YelpCamp server has started');
 // });
-app.listen(process.env.PORT, process.env.IP, function() {
+app.listen(process.env.PORT, process.env.IP, function () {
 	console.log("The YelpCamp Server has started!");
 });
