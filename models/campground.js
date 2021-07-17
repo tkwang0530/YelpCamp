@@ -41,7 +41,7 @@ const campgroundSchema = new mongoose.Schema({
 });
 
 // add a slug before the campground gets saved to the database
-campgroundSchema.pre('save', async (next) => {
+campgroundSchema.pre('save', async function (next) {
 	try {
 		// check if a new campground is being saved, or if the campground name is being modified
 		if (this.isNew || this.isModified("name")) {
