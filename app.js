@@ -15,7 +15,7 @@ const User = require("./models/user");
 const app = express();
 
 //Requiring Routes
-var commentRoutes = require("./routes/comments"),
+const commentRoutes = require("./routes/comments"),
 	reviewRoutes = require("./routes/reviews"),
 	campgroundRoutes = require("./routes/campgrounds"),
 	indexRoutes = require("./routes/index");
@@ -29,9 +29,7 @@ app.use(flash());
 app.locals.moment = require("moment");
 //seedDB(); seed the database
 
-
-//"mongodb://localhost:27017/yelp_camp"
-var url = process.env.DATABASEURL || "mongodb://localhost:27017/yelp_camp";
+const url = process.env.DATABASEURL || "mongodb://localhost:27017/yelp_camp";
 mongoose.connect(url, {
 	useNewUrlParser: true,
 	useCreateIndex: true //Maybe we don't need this line??
@@ -65,12 +63,6 @@ app.use("/campgrounds", campgroundRoutes);
 app.use("/campgrounds/:slug/reviews", reviewRoutes);
 app.use("/campgrounds/:slug/comments", commentRoutes);
 
-//app.use("/campgrounds/:id/comments", commentRoutes);
-
-
-// app.listen(3000, () => {
-// 	console.log('The YelpCamp server has started');
-// });
 app.listen(process.env.PORT, process.env.IP, function () {
 	console.log("The YelpCamp Server has started!");
 });
