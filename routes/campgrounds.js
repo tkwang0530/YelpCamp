@@ -160,9 +160,9 @@ router.put("/:slug", middleware.checkCampgroundOwnership, async (req, res) => {
 router.delete("/:slug", middleware.checkCampgroundOwnership, async (req, res) => {
   try {
     const campground = await Campground.findOne({ slug: req.params.slug });
-    await Comment.remove({ "_id": { $in: campground.comments } });
-    await Review.remove({ "_id": { $in: campground.comments } });
-    await campground.remove();
+    await Comment.deleteMany({ "_id": { $in: campground.comments } });
+    await Review.deleteMany({ "_id": { $in: campground.comments } });
+    await campground.deleteOne();
     req.flash("success", "Campground deleted successfully!");
     res.redirect("/campgrounds");
   } catch (error) {
