@@ -13,12 +13,9 @@ ImageSchema.virtual('thumbnail').get(function () {
 
 const opts = { toJSON: { virtuals: true } }
 
-const campgroundSchema = new Schema({
+const CampgroundSchema = new Schema({
 	title: String,
-	price: Number,
-	image: [ImageSchema],
-	description: String,
-	location: String,
+	images: [ImageSchema],
 	geometry: {
 		type: {
 			type: String,
@@ -30,26 +27,20 @@ const campgroundSchema = new Schema({
 			required: true
 		}
 	},
-	createdAt: { type: Date, default: Date.now },
+	price: Number,
+	description: String,
+	location: String,
 	author: {
-		type: mongoose.Schema.Types.ObjectId,
+		type: Schema.Types.ObjectId,
 		ref: "User"
 	},
 	reviews: [
 		{
-			type: mongoose.Schema.Types.ObjectId,
+			type: Schema.Types.ObjectId,
 			ref: "Review"
 		}
 	],
-	slug: {
-		type: String,
-		unique: true
-	},
-	rating: {
-		type: Number,
-		default: 0
-	}
-});
+}, opts);
 
 CampgroundSchema.virtual('properties.popUpMarkup').get(function () {
     return `
@@ -67,7 +58,7 @@ CampgroundSchema.post('findOneAndDelete', async function (doc) {
     }
 })
 
-module.exports = mongoose.model("Campground", campgroundSchema);
+module.exports = mongoose.model("Campground", CampgroundSchema);
 
 
 
