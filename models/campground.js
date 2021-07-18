@@ -1,9 +1,22 @@
 const mongoose = require("mongoose");
-// SCHEMA SETUP
-const campgroundSchema = new mongoose.Schema({
+const Review = require('./review');
+const Schema = mongoose.Schema;
+
+const ImageSchema = new Schema({
+    url: String,
+    filename: String
+});
+
+ImageSchema.virtual('thumbnail').get(function () {
+    return this.url.replace('/upload', '/upload/w_200');
+});
+
+const opts = { toJSON: { virtuals: true } }
+
+const campgroundSchema = new Schema({
 	title: String,
 	price: Number,
-	image: String,
+	image: [ImageSchema],
 	description: String,
 	location: String,
 	geometry: {
@@ -22,11 +35,6 @@ const campgroundSchema = new mongoose.Schema({
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "User"
 	},
-	comments: [{
-		type: mongoose.Schema.Types.ObjectId,
-		ref: "Comment"
-	}
-	],
 	reviews: [
 		{
 			type: mongoose.Schema.Types.ObjectId,
@@ -43,53 +51,23 @@ const campgroundSchema = new mongoose.Schema({
 	}
 });
 
-// add a slug before the campground gets saved to the database
-campgroundSchema.pre('save', async function (next) {
-	try {
-		// check if a new campground is being saved, or if the campground's title is being modified
-		if (this.isNew || this.isModified("title")) {
-			console.log('this._id', this._id)
-			console.log('this.title', this.title)
-			this.slug = await generateUniqueSlug(this._id, this.title);
-		}
-		next();
-	} catch (err) {
-		next(err);
-	}
+CampgroundSchema.virtual('properties.popUpMarkup').get(function () {
+    return `
+    <strong><a href="/campgrounds/${this._id}">${this.title}</a><strong>
+    <p>${this.description.substring(0, 20)}...</p>`
 });
 
-const Campground = mongoose.model("Campground", campgroundSchema);
+CampgroundSchema.post('findOneAndDelete', async function (doc) {
+    if (doc) {
+        await Review.deleteMany({
+            _id: {
+                $in: doc.reviews
+            }
+        })
+    }
+})
 
-module.exports = Campground;
+module.exports = mongoose.model("Campground", campgroundSchema);
 
-const generateUniqueSlug = async (id, campgroundName, slug) => {
-	try {
-		// generate the initial slug
-		if (!slug) {
-			slug = slugify(campgroundName);
-		}
-		// check if a campground with the slug already exists
-		const campground = await Campground.findOne({ slug: slug });
-		// check if a campground was not found or if the found campground is the current campground
-		if (!campground || campground._id.equals(id)) {
-			return slug;
-		}
-		// if not unique, generate a new slug
-		const newSlug = slugify(campgroundName);
-		// check again by calling the function recursively
-		return await generateUniqueSlug(id, campgroundName, newSlug);
-	} catch (err) {
-		throw new Error(err);
-	}
-}
 
-const slugify = (text) => {
-	const slug = text.toString().toLowerCase()
-		.replace(/\s+/g, '-')        // Replace spaces with -
-		.replace(/[^\w\-]+/g, '')    // Remove all non-word chars
-		.replace(/\-\-+/g, '-')      // Replace multiple - with single -
-		.replace(/^-+/, '')          // Trim - from start of text
-		.replace(/-+$/, '')          // Trim - from end of text
-		.substring(0, 75);           // Trim at 75 characters
-	return slug + "-" + Math.floor(1000 + Math.random() * 9000);  // Add 4 random digits to improve uniqueness
-}
+
